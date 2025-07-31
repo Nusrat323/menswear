@@ -1,8 +1,13 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useCart } from "../context/CartContext";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProductDetails = () => {
   const { category, id } = useParams();
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const [productList, setProductList] = useState([]);
   const [product, setProduct] = useState(null);
@@ -10,6 +15,7 @@ const ProductDetails = () => {
   const [addedToCart, setAddedToCart] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
   const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     setLoading(true);
@@ -17,8 +23,8 @@ const ProductDetails = () => {
     setMainImage("");
     setSelectedSize("");
     setAddedToCart(false);
+    setQuantity(1);
 
-    // Map category to JSON file paths in public folder
     const fileMap = {
       tshirts: "/data/products.json",
       jeans: "/data/jeans.json",
@@ -36,7 +42,6 @@ const ProductDetails = () => {
       .then((res) => res.json())
       .then((data) => {
         setProductList(data);
-
         const foundProduct = data.find((p) => p.id === Number(id));
         setProduct(foundProduct);
         setMainImage(foundProduct?.images?.[0] || "");
@@ -48,9 +53,7 @@ const ProductDetails = () => {
       });
   }, [category, id]);
 
-  if (loading) {
-    return <div className="p-8 text-center">Loading...</div>;
-  }
+  if (loading) return <div className="p-8 text-center">Loading...</div>;
 
   if (!product) {
     return (
@@ -62,14 +65,34 @@ const ProductDetails = () => {
 
   const handleAddToCart = () => {
     if (!selectedSize) return;
+
+    addToCart({
+      id: `${product.id}-${selectedSize}`, // Unique by size
+      name: product.name,
+      price: product.price,
+      size: selectedSize,
+      image: mainImage,
+      quantity,
+    });
+
     setAddedToCart(true);
-    
+    toast.success("Product added to cart!");
+
+    // Reset "Added" state after 2 seconds
+    setTimeout(() => setAddedToCart(false), 2000);
   };
 
-  const currentMeasurements = selectedSize ? product.measurements[selectedSize] : null;
+  const handleGoToCart = () => {
+    navigate("/mycart"); // match your router path
+  };
+
+  const currentMeasurements = selectedSize
+    ? product.measurements[selectedSize]
+    : null;
 
   return (
     <div className="max-w-5xl mx-auto p-6">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="bg-white shadow rounded-lg overflow-hidden flex flex-col md:flex-row gap-8">
         {/* Images */}
         <div className="md:w-1/2 p-4">
@@ -97,7 +120,9 @@ const ProductDetails = () => {
         <div className="md:w-1/2 p-4 flex flex-col justify-between">
           <div>
             <h2 className="text-3xl font-semibold mb-4">{product.name}</h2>
-            <p className="text-xl text-gray-700 mb-6">৳{product.price.toFixed(2)}</p>
+            <p className="text-xl text-gray-700 mb-6">
+              ৳{product.price.toFixed(2)}
+            </p>
 
             <h3 className="text-xl font-semibold mb-2">Description</h3>
             <p className="mb-6 text-gray-600">{product.description}</p>
@@ -133,17 +158,48 @@ const ProductDetails = () => {
                 Please select a size to see measurements.
               </p>
             )}
+
+            {/* Quantity Selector */}
+            <div className="flex items-center gap-4 mb-6">
+              <span className="font-medium">Quantity:</span>
+              <div className="flex items-center border rounded overflow-hidden">
+                <button
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  className="px-3 py-1 bg-gray-200 hover:bg-gray-300"
+                >
+                  −
+                </button>
+                <span className="px-4">{quantity}</span>
+                <button
+                  onClick={() => setQuantity((q) => q + 1)}
+                  className="px-3 py-1 bg-gray-200 hover:bg-gray-300"
+                >
+                  +
+                </button>
+              </div>
+            </div>
           </div>
 
-          <button
-            onClick={handleAddToCart}
-            disabled={!selectedSize}
-            className={`mt-4 px-6 py-3 rounded text-white transition-all duration-300 ${
-              addedToCart ? "bg-green-600 hover:bg-green-700" : "bg-black hover:bg-gray-800"
-            } ${!selectedSize ? "opacity-50 cursor-not-allowed" : ""}`}
-          >
-            {addedToCart ? "Added" : "Add to Cart"}
-          </button>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={handleAddToCart}
+              disabled={!selectedSize}
+              className={`px-6 py-3 rounded text-white transition-all duration-300 ${
+                addedToCart
+                  ? "bg-green-600 hover:bg-green-700"
+                  : "bg-black hover:bg-gray-800"
+              } ${!selectedSize ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              {addedToCart ? "Added" : "Add to Cart"}
+            </button>
+
+            <button
+              onClick={handleGoToCart}
+              className="px-6 py-3 rounded border border-black text-black hover:bg-gray-100 transition"
+            >
+              Go to Cart
+            </button>
+          </div>
         </div>
       </div>
     </div>

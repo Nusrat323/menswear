@@ -63,9 +63,6 @@ const Navbar = () => {
 
   return (
     <nav className="w-full bg-white shadow-md z-50 px-6 py-4 flex justify-between items-center relative">
-      {/*<div className="text-2xl font-bold cursor-pointer" onClick={() => handleNavigation("/")}>
-        Gentlify
-      </div>*/}
 
       <img
   src={logo}
@@ -100,6 +97,13 @@ const Navbar = () => {
           className="text-black hover:text-gray-500"
         >
           Shirts
+        </button>
+
+        <button
+          onClick={() => handleNavigation("/mycart")}
+          className="text-black hover:text-gray-500"
+        >
+         My Cart
         </button>
 
         {/* Search icon */}
@@ -204,6 +208,13 @@ const Navbar = () => {
             className="block text-black hover:text-gray-500"
           >
             Shirts
+          </button>
+
+          <button
+            onClick={() => handleNavigation("/mycart")}
+            className="block text-black hover:text-gray-500"
+          >
+            My Cart
           </button>
         </div>
       )}
