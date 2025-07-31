@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { FiMenu, FiX, FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-
+import logo from "../assets/logo.png"
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -63,12 +63,21 @@ const Navbar = () => {
 
   return (
     <nav className="w-full bg-white shadow-md z-50 px-6 py-4 flex justify-between items-center relative">
-      <div className="text-2xl font-bold ">Gentlify</div>
+      {/*<div className="text-2xl font-bold cursor-pointer" onClick={() => handleNavigation("/")}>
+        Gentlify
+      </div>*/}
+
+      <img
+  src={logo}
+  alt="Gentlify Logo"
+  className="h-10 w-20 cursor-pointer"
+  onClick={() => handleNavigation("/")}
+/>
+
 
       {/* Desktop menu */}
       <div className="hidden lg:flex gap-6 items-center">
-
-      <button
+        <button
           onClick={() => handleNavigation("/")}
           className="text-black hover:text-gray-500"
         >
@@ -178,7 +187,6 @@ const Navbar = () => {
           >
             Home
           </button>
-
           <button
             onClick={() => handleNavigation("/tshirts")}
             className="block text-black hover:text-gray-500"
