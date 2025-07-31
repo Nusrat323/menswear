@@ -1,7 +1,4 @@
-// src/pages/Home.jsx
-import Jeans from "./Jeans";
-import Tshirts from "./Tshirts";
-import Shirts from "./Shirts";
+
 import Banner from "../components/Banner";
 import NewArrival from "../components/NewArrival";
 import Sale from "../components/Sale";
