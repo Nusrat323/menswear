@@ -1,25 +1,56 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
-import { products as tshirtProducts } from "../data/products";
-import { jeansProducts } from "../data/jeansProducts";
-import { shirtsProducts } from "../data/shirtsProducts";
-
+import { useState, useEffect } from "react";
 
 const ProductDetails = () => {
   const { category, id } = useParams();
 
-  // Map categories to their respective data arrays
-  const dataMap = {
-    tshirts: tshirtProducts,
-    jeans: jeansProducts,
-    shirts: shirtsProducts, 
-  };
-
-  const productList = dataMap[category] || [];
-  const product = productList.find((p) => p.id === Number(id));
-  const [mainImage, setMainImage] = useState(product?.images?.[0] || "");
+  const [productList, setProductList] = useState([]);
+  const [product, setProduct] = useState(null);
+  const [mainImage, setMainImage] = useState("");
   const [addedToCart, setAddedToCart] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    setProduct(null);
+    setMainImage("");
+    setSelectedSize("");
+    setAddedToCart(false);
+
+    // Map category to JSON file paths in public folder
+    const fileMap = {
+      tshirts: "/data/products.json",
+      jeans: "/data/jeans.json",
+      shirts: "/data/shirts.json",
+    };
+
+    const filePath = fileMap[category];
+
+    if (!filePath) {
+      setLoading(false);
+      return;
+    }
+
+    fetch(filePath)
+      .then((res) => res.json())
+      .then((data) => {
+        setProductList(data);
+
+        const foundProduct = data.find((p) => p.id === Number(id));
+        setProduct(foundProduct);
+        setMainImage(foundProduct?.images?.[0] || "");
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error loading product data:", error);
+        setLoading(false);
+      });
+  }, [category, id]);
+
+  if (loading) {
+    return <div className="p-8 text-center">Loading...</div>;
+  }
 
   if (!product) {
     return (
@@ -32,7 +63,7 @@ const ProductDetails = () => {
   const handleAddToCart = () => {
     if (!selectedSize) return;
     setAddedToCart(true);
-    // TODO: Add your cart logic here
+    
   };
 
   const currentMeasurements = selectedSize ? product.measurements[selectedSize] : null;
@@ -120,4 +151,3 @@ const ProductDetails = () => {
 };
 
 export default ProductDetails;
-

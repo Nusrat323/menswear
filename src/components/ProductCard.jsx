@@ -1,5 +1,3 @@
-
-
 import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product, category }) => {
@@ -16,7 +14,7 @@ const ProductCard = ({ product, category }) => {
     >
       <div className="overflow-hidden rounded-t-xl h-56 sm:h-60 md:h-64 lg:h-56">
         <img
-          src={product.img}
+          src={product.images[0]}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
@@ -34,3 +32,4 @@ const ProductCard = ({ product, category }) => {
 };
 
 export default ProductCard;
+
