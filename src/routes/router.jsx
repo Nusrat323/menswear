@@ -6,7 +6,8 @@ import ProductDetails from "../pages/ProductDetails";
 import Tshirts from "../pages/Tshirts";
 import Jeans from "../pages/Jeans";
 import Shirts from "../pages/Shirts";
-import MyCart from "../pages/MyCart"; // ✅ NEW
+import MyCart from "../pages/MyCart"; 
+import CheckoutPage from "../pages/CheckoutPage"
 
 const router = createBrowserRouter([
   {
@@ -18,7 +19,9 @@ const router = createBrowserRouter([
       { path: "/jeans", element: <Jeans /> },
       { path: "/shirts", element: <Shirts /> },
       { path: "/product/:category/:id", element: <ProductDetails /> },
-      { path: "/mycart", element: <MyCart /> }, // ✅ NEW
+      { path: "/mycart", element: <MyCart /> }, 
+      {path: "/checkout",element: <CheckoutPage /> }
+      
     ],
   },
 ]);
